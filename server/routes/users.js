@@ -3,7 +3,7 @@ module.exports = function(model, express, logger) {
 
   /* GET users listing using the model. */
   router.get('/', function(req, res, next) {
-    res.send('respond with a resource');
+    res.send(model.getUsers());
   });
 
   router.post('/', function(req, res, next) {

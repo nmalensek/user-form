@@ -1,33 +1,41 @@
 module.exports = function(userFile, fse, logger) {
-    function User(name, org, email) {
-        this.name = name;
+    function UserOps() {
+        
+    };
+    
+    function User(firstName, lastName, org, email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.organization = org;
         this.email = email;
     }
     
-    User.getUsers = function(cb) {
+    UserOps.getUsers = function(cb) {
         //open file and load all users.
         //just use single file containing all users 'til everything's working, then convert to mongo.
         fse.readJSON(userFile)
         .then((data) => {
-          cb(null, data)  
+          console.log(data);
+            cb(null, data);  
         })
         .catch((err) => {
             cb(err, null);
+            logger.error(err);
+            console.error(err);
         })
     }
 
-    User.addUser = function(cb) {
+    UserOps.addUser = function(userData, cb) {
         
     }
     
-    User.editUser = function(cb) {
+    UserOps.editUser = function(userData, id, cb) {
 
     }
 
-    User.deleteUser = function(cb) {
+    UserOps.deleteUser = function(id, cb) {
 
     }
     
-    return User;
+    return UserOps;
 }
