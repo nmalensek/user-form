@@ -15,7 +15,7 @@ module.exports = function(userFile, fse, logger) {
         //just use single file containing all users 'til everything's working, then convert to mongo.
         return fse.readJSON(userFile)
         .then((data) => {
-            cb(null, getUserArray(Object.values(data)));  
+            cb(null, Object.values(data));  
         })
         .catch((err) => {
             cb(err, null);
@@ -34,16 +34,6 @@ module.exports = function(userFile, fse, logger) {
 
     UserOps.deleteUser = function(id, cb) {
 
-    }
-
-    getUserArray = function(userObjs) {
-        var arr = [];
-
-        userObjs.forEach((curr) => {
-            arr.push(curr);
-        })
-
-        return arr;
     }
     
     return UserOps;
