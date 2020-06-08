@@ -15,17 +15,17 @@ class App extends React.Component {
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleUserDelete = this.handleUserDelete.bind(this);
   }
-  
+
   componentDidMount() {
     this.getAllUsers();
   }
 
   getAllUsers() {
     axios.get('/users').then((res) => {
-        this.setState({
+      this.setState({
         users: res.data
       });
-  });
+    });
   }
 
   handleInputChange() {
@@ -47,16 +47,16 @@ class App extends React.Component {
   render() {
     const searchResults = this.state.users.map((user, ind, arr) => {
       return (
-      <SearchResult 
-        key = {ind}
-        id = {user.id}
-        firstName = {user.firstName}
-        lastName = {user.lastName}
-        email = {user.email}
-        org = {user.organization}
-        deleteFunc = {this.handleUserDelete}
-        editFunc = {this.handleUserChange}
-      />
+        <SearchResult
+          key={ind}
+          id={user.id}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          email={user.email}
+          org={user.organization}
+          deleteFunc={this.handleUserDelete}
+          editFunc={this.handleUserChange}
+        />
       )
     })
 
@@ -73,19 +73,19 @@ class App extends React.Component {
             <input id="firstNameInput" type="text" onChange={this.handleInputChange}>
             </input>
           </label>
-          
+
           <label>
             Last Name:
             <input id="lastNameInput" type="text" onChange={this.handleInputChange}>
             </input>
           </label>
-          
+
           <label>
             Email:
             <input id="emailInput" type="email" onChange={this.handleInputChange}>
             </input>
           </label>
-          
+
           <label>
             Organization:
             <input id="orgInput" type="text" onChange={this.handleInputChange}>
