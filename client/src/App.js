@@ -18,16 +18,14 @@ class App extends React.Component {
   
   componentDidMount() {
     this.getAllUsers();
-    console.log(this.state.users);
   }
 
   getAllUsers() {
     axios.get('/users').then((res) => {
-      console.log(res)
-      // this.setState({
-      // users: res.data
-    // });
-  })
+        this.setState({
+        users: res.data
+      });
+  });
   }
 
   handleInputChange() {
@@ -51,6 +49,7 @@ class App extends React.Component {
       return (
       <SearchResult 
         key = {ind}
+        id = {user.id}
         firstName = {user.firstName}
         lastName = {user.lastName}
         email = {user.email}
@@ -96,7 +95,6 @@ class App extends React.Component {
         <div>
           {searchResults}
         </div>
-        <div>{this.state.users}</div>
       </div>
     );
   }
