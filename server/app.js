@@ -52,6 +52,7 @@ app.use(function(err, req, res, next) {
 });
 
 const server = app.listen(8080);
+console.log('server initialized and listening...');
 
 process.on('SIGINT', () => {
   logger.error('closing server');

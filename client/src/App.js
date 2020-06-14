@@ -28,24 +28,24 @@ class App extends React.Component {
     });
   }
 
-  handleInputChange() {
+  handleInputChange(e) {
 
   }
 
-  handleNewUserSubmit() {
+  handleNewUserSubmit(e) {
 
   }
 
-  handleUserDelete() {
-
+  handleUserDelete(id, e) {
+    console.log('delete ' + id);
   }
 
-  handleUserChange() {
+  handleUserChange(id, e) {
 
   }
 
   render() {
-    const searchResults = this.state.users.map((user, ind, arr) => {
+    const searchResults = this.state.users.map((user, ind) => {
       return (
         <SearchResult
           key={ind}
@@ -93,7 +93,25 @@ class App extends React.Component {
           </label>
         </div>
         <div>
-          {searchResults}
+          <table>
+            <tbody>
+              <tr>
+                <th>
+                  First name
+                        </th>
+                <th>
+                  Last name
+                        </th>
+                <th>
+                  Email
+                        </th>
+                <th>
+                  Organization
+                        </th>
+              </tr>
+              {searchResults}
+            </tbody>
+          </table>
         </div>
       </div>
     );

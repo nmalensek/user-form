@@ -14,21 +14,20 @@ module.exports = function(userFile, fse, logger) {
         //open file and load all users.
         //just use single file containing all users 'til everything's working, then convert to mongo.
         return fse.readJSON(userFile)
-        .then((data) => {
+        .then(data => {
             cb(null, Object.values(data));  
         })
-        .catch((err) => {
+        .catch(err => {
             cb(err, null);
             logger.error(err);
-            console.error(err);
-        })
+        });
     }
 
-    UserOps.addUser = function(userData, cb) {
+    UserOps.addUser = function(userFile, cb) {
         
     }
     
-    UserOps.editUser = function(userData, id, cb) {
+    UserOps.editUser = function(userFile, id, cb) {
 
     }
 
