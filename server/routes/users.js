@@ -8,7 +8,6 @@ module.exports = function(userModel, express, logger) {
           if (error) {
             return res.status(500).send(new Error('could not load users.'));
           } else {
-            console.log(users);
             return res.status(200).send(users);
           }
       });
@@ -23,7 +22,7 @@ module.exports = function(userModel, express, logger) {
   });
 
   router.delete('/:userid', function(req, res, next) {
-
+    return req;
   });
 
   return router;

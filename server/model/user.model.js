@@ -13,6 +13,7 @@ module.exports = function(userFile, fse, logger) {
     UserOps.getUsers = function(cb) {
         //open file and load all users.
         //just use single file containing all users 'til everything's working, then convert to mongo.
+        //TODO: get subset, make UI paginated.
         return fse.readJSON(userFile)
         .then(data => {
             cb(null, Object.values(data));  

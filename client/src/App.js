@@ -7,7 +7,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      users: [],
+      firstNameInput: '',
+      lastNameInput: '',
+      emailInput: '',
+      organizationInput: ''
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -21,7 +25,7 @@ class App extends React.Component {
   }
 
   getAllUsers() {
-    axios.get('/users').then((res) => {
+    axios.get('/users').then(res => {
       this.setState({
         users: res.data
       });
@@ -29,15 +33,19 @@ class App extends React.Component {
   }
 
   handleInputChange(e) {
-
+    
   }
 
   handleNewUserSubmit(e) {
+    axios.post('/users', {
 
+    });
   }
 
   handleUserDelete(id, e) {
-    console.log('delete ' + id);
+    axios.delete('/users/' + id).then(
+      //display success message.
+    );
   }
 
   handleUserChange(id, e) {
@@ -70,25 +78,25 @@ class App extends React.Component {
         <div className="newUser">
           <label>
             First Name:
-            <input id="firstNameInput" type="text" onChange={this.handleInputChange}>
+            <input id="firstNameInput" type="text" value={this.state.firstNameInput} onChange={this.handleInputChange}>
             </input>
           </label>
 
           <label>
             Last Name:
-            <input id="lastNameInput" type="text" onChange={this.handleInputChange}>
+            <input id="lastNameInput" type="text" value={this.state.lastNameInput} onChange={this.handleInputChange}>
             </input>
           </label>
 
           <label>
             Email:
-            <input id="emailInput" type="email" onChange={this.handleInputChange}>
+            <input id="emailInput" type="email" value={this.state.emailInput} onChange={this.handleInputChange}>
             </input>
           </label>
 
           <label>
             Organization:
-            <input id="orgInput" type="text" onChange={this.handleInputChange}>
+            <input id="orgInput" type="text" value={this.state.organizationInput} onChange={this.handleInputChange}>
             </input>
           </label>
         </div>
