@@ -11,10 +11,10 @@ class App extends React.Component {
       firstNameInput: '',
       lastNameInput: '',
       emailInput: '',
-      organizationInput: ''
+      orgInput: ''
     }
 
-    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleTextInputChange = this.handleTextInputChange.bind(this);
     this.handleNewUserSubmit = this.handleNewUserSubmit.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleUserDelete = this.handleUserDelete.bind(this);
@@ -22,6 +22,15 @@ class App extends React.Component {
 
   componentDidMount() {
     this.getAllUsers();
+  }
+
+  createNewUserFromInputs() {
+    return {
+      firstName: this.state.firstNameInput,
+      lastName: this.state.lastNameInput,
+      email: this.state.emailInput,
+      organization: this.state.orgInput
+    }
   }
 
   getAllUsers() {
@@ -32,14 +41,21 @@ class App extends React.Component {
     });
   }
 
-  handleInputChange(e) {
-    
+  handleTextInputChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
   }
 
   handleNewUserSubmit(e) {
-    axios.post('/users', {
-
-    });
+    //TODO: do client-side validation
+    axios.post('/users', this.createNewUserFromInputs())
+      .then(resp => {
+        //display success message.
+      })
+      .catch(err => {
+        //show error message on UI.
+      });
   }
 
   handleUserDelete(id, e) {
@@ -78,25 +94,25 @@ class App extends React.Component {
         <div className="newUser">
           <label>
             First Name:
-            <input id="firstNameInput" type="text" value={this.state.firstNameInput} onChange={this.handleInputChange}>
+            <input id="firstNameInput" name="firstNameInput" type="text" value={this.state.firstNameInput} onChange={this.handleTextInputChange}>
             </input>
           </label>
 
           <label>
             Last Name:
-            <input id="lastNameInput" type="text" value={this.state.lastNameInput} onChange={this.handleInputChange}>
+            <input id="lastNameInput" name="lastNameInput" type="text" value={this.state.lastNameInput} onChange={this.handleTextInputChange}>
             </input>
           </label>
 
           <label>
             Email:
-            <input id="emailInput" type="email" value={this.state.emailInput} onChange={this.handleInputChange}>
+            <input id="emailInput" name="emailInput" type="email" value={this.state.emailInput} onChange={this.handleTextInputChange}>
             </input>
           </label>
 
           <label>
             Organization:
-            <input id="orgInput" type="text" value={this.state.organizationInput} onChange={this.handleInputChange}>
+            <input id="orgInput" name="orgInput" type="text" value={this.state.orgInput} onChange={this.handleTextInputChange}>
             </input>
           </label>
         </div>
