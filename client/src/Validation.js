@@ -1,0 +1,45 @@
+
+class Validation {
+    hasStringInput(input) {
+        if (!input || typeof input !== 'string' || input.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    requiredIsEmail(email) {
+        //from: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
+        const emailExpression = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        if (this.hasStringInput(email)) {
+            if (email.match(emailExpression) !== null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    requiredIsName(name) {
+       const nameExpression = /^[a-zA-Z][-']?/;
+        if (this.hasStringInput(name)) {
+            let matches = name.match(nameExpression);
+            if (matches !== null && matches.length === 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    requiredIsOrg(org) {
+        const orgExpression = /^[a-zA-Z][-'()]?/;
+        if (this.hasStringInput(org)) {
+            let matches = org.match(orgExpression);
+            if (matches !== null && matches.length === 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
+
+export default Validation;

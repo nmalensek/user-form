@@ -2,16 +2,15 @@ import React from 'react';
 import './App.css';
 import axios from 'axios';
 import SearchResult from './SearchResult.js';
+import Validation from './Validation.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
-      firstNameInput: '',
-      lastNameInput: '',
-      emailInput: '',
-      orgInput: ''
+      inputs: {},
+      inputErrors: {}
     }
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
@@ -42,8 +41,10 @@ class App extends React.Component {
   }
 
   handleTextInputChange(e) {
+    let inputDict = this.state.inputs;
+    inputDict[e.target.name] = e.target.value;
     this.setState({
-      [e.target.name]: e.target.value
+      inputDict
     });
   }
 
@@ -65,7 +66,7 @@ class App extends React.Component {
   }
 
   handleUserChange(id, e) {
-
+    
   }
 
   render() {
@@ -85,34 +86,35 @@ class App extends React.Component {
     })
 
     return (
-      <div className="App">
+      <div className='App'>
         <div>
           <h1>
             User Management
           </h1>
         </div>
-        <div className="newUser">
+        <div className='newUser'>
           <label>
             First Name:
-            <input id="firstNameInput" name="firstNameInput" type="text" value={this.state.firstNameInput} onChange={this.handleTextInputChange}>
+            <input id='firstNameInput' name='firstNameInput' type='text' value={this.state.inputs['firstNameInput']  || ''} onChange={this.handleTextInputChange}>
             </input>
           </label>
 
           <label>
             Last Name:
-            <input id="lastNameInput" name="lastNameInput" type="text" value={this.state.lastNameInput} onChange={this.handleTextInputChange}>
+            <input id='lastNameInput' name='lastNameInput' type='text' value={this.state.inputs['lastNameInput']  || ''} onChange={this.handleTextInputChange}>
             </input>
           </label>
-
+        
           <label>
             Email:
-            <input id="emailInput" name="emailInput" type="email" value={this.state.emailInput} onChange={this.handleTextInputChange}>
+            <input id='emailInput' name='emailInput' type='email' value={this.state.inputs['emailInput'] || ''} onChange={this.handleTextInputChange}>
             </input>
+            <div id='emailError' name='emailError' style={{display:'none'}}>* Please enter a valid email address.</div>
           </label>
 
           <label>
             Organization:
-            <input id="orgInput" name="orgInput" type="text" value={this.state.orgInput} onChange={this.handleTextInputChange}>
+            <input id='orgInput' name='orgInput' type='text' value={this.state.inputs['orgInput'] || ''} onChange={this.handleTextInputChange}>
             </input>
           </label>
         </div>
