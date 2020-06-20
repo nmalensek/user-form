@@ -1,4 +1,4 @@
-module.exports = function(userModel, express, logger) {
+module.exports = function(userModel, express, valFuncs, logger) {
   const router = express.Router();
 
   /* GET users listing using the model. */

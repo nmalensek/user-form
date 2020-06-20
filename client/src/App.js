@@ -17,6 +17,8 @@ class App extends React.Component {
     this.handleNewUserSubmit = this.handleNewUserSubmit.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleUserDelete = this.handleUserDelete.bind(this);
+
+    this.validation = new Validation();
   }
 
   componentDidMount() {
@@ -42,6 +44,9 @@ class App extends React.Component {
 
   handleTextInputChange(e) {
     let inputDict = this.state.inputs;
+
+
+
     inputDict[e.target.name] = e.target.value;
     this.setState({
       inputDict
@@ -95,13 +100,17 @@ class App extends React.Component {
         <div className='newUser'>
           <label>
             First Name:
-            <input id='firstNameInput' name='firstNameInput' type='text' value={this.state.inputs['firstNameInput']  || ''} onChange={this.handleTextInputChange}>
+            <input id='firstNameInput' name='firstNameInput' type='text' 
+            value={this.state.inputs['firstNameInput']  || ''} 
+            onChange={this.handleTextInputChange}>
             </input>
           </label>
 
           <label>
             Last Name:
-            <input id='lastNameInput' name='lastNameInput' type='text' value={this.state.inputs['lastNameInput']  || ''} onChange={this.handleTextInputChange}>
+            <input id='lastNameInput' name='lastNameInput' type='text' 
+            value={this.state.inputs['lastNameInput']  || ''} 
+            onChange={this.handleTextInputChange}>
             </input>
           </label>
         

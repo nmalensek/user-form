@@ -18,6 +18,8 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
+const validationFuncs = require('../client/src/Validation')();
+
 //using a file as a simple database for the moment, make sure the file's there.
 const dataPath = './model/user-entries/user.entries.json';
 fse.ensureFileSync(dataPath);
@@ -27,7 +29,8 @@ const app = express();
 
 //user page will be the index.
 const userModel = require('./model/user.model')(dataPath, fse, logger);
-const usersRouter = require('./routes/users')(userModel, express, logger);
+const usersRouter = require('./routes/users')(
+                    userModel, express, validationFuncs, logger);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -45,7 +48,7 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.log(err);
   // render the error page
   res.status(err.status || 500);
   res.render('error');
