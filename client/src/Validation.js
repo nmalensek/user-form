@@ -1,5 +1,8 @@
 module.exports = function() {
     class Validation {
+        constructor() {
+            this.hasStringInput = this.hasStringInput.bind(this);
+        }
         static test() {
             console.log('test validation');
         }

@@ -40,3 +40,12 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.inactive-error {
+  display: none;
+}
+
+.active-error {
+  display: inline-block;
+  color: darkred;
+}
