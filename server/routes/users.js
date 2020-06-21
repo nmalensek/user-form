@@ -1,4 +1,4 @@
-module.exports = function(userModel, express, valFuncs, logger) {
+module.exports = function(userModel, express, validation, logger) {
   const router = express.Router();
 
   /* GET users listing using the model. */
@@ -13,8 +13,8 @@ module.exports = function(userModel, express, valFuncs, logger) {
       });
   });
 
-  router.post('/', function(req, res, next) {
-
+  router.post('/', validateNewUser(), function(req, res, next) {
+    
   });
 
   router.put('/:userid', function(req, res, next) {
@@ -24,6 +24,15 @@ module.exports = function(userModel, express, valFuncs, logger) {
   router.delete('/:userid', function(req, res, next) {
     return req;
   });
+
+  function validateNewUser() {
+    return [
+      validation.body('email', 'Email is missing or has an invalid format.').exists().isEmail().normalizeEmail(),
+      validation.body('firstName', 'First name is missing or contains invalid characters.').exists().trim().escape(),
+      validation.body('lastName', 'Last name is missing or contains invalid characters.').exists().trim().escape(),
+      validation.body('organization', 'Organization is missing or contains invalid characters.').exists().trim().escape()
+    ] 
+  }
 
   return router;
 }

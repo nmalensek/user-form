@@ -3,6 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const winston = require('winston');
 const fse = require('fs-extra');
+const validation = require('express-validator');
 
 const logger = new winston.createLogger({
   level: 'debug',
@@ -18,11 +19,6 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-//This is only here because create-react-app doesn't allow references
-//to files outside its src directory. Once everything's configured,
-//this file will be moved to the 'common' dir.
-const validationFuncs = require('../client/src/Validation');
-
 //using a file as a simple database for the moment, make sure the file's there.
 const dataPath = './model/user-entries/user.entries.json';
 fse.ensureFileSync(dataPath);
@@ -33,7 +29,7 @@ const app = express();
 //user page will be the index.
 const userModel = require('./model/user.model')(dataPath, fse, logger);
 const usersRouter = require('./routes/users')(
-                    userModel, express, validationFuncs, logger);
+                    userModel, express, validation, logger);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

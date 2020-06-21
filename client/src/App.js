@@ -10,7 +10,8 @@ class App extends React.Component {
     this.state = {
       users: [],
       inputs: {},
-      inputErrors: {}
+      inputErrors: {},
+      triedToSubmit: false
     }
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
@@ -52,11 +53,11 @@ class App extends React.Component {
     let errors = this.state.inputErrors;
 
     if (this.inputData[e.target.name].func(e.target.value)) {
-      errors[e.target.name] = false;
+      delete errors[e.target.name];
     } else {
       errors[e.target.name] = true;
     }
-
+    
     inputDict[e.target.name] = e.target.value;
     this.setState({
       inputDict
@@ -64,7 +65,13 @@ class App extends React.Component {
   }
 
   handleNewUserSubmit(e) {
-    //TODO: do client-side validation
+    //only show validation errors when a user tries to submit the form.
+    //TODO: finish implementing this logic on the elements.
+    if (Object.keys(this.state.inputErrors).length !== 0) {
+      this.setState({triedToSubmit: true});
+      return;
+    }
+
     axios.post('/users', this.createNewUserFromInputs())
       .then(resp => {
         //display success message.
@@ -112,7 +119,7 @@ class App extends React.Component {
           <label>
             First Name:
             <input id='firstNameInput' name={this.inputData.firstNameInput.name} type='text' 
-            value={this.state.inputs[this.inputData.firstNameInput.name]  || ''} 
+            value={this.state.inputs[this.inputData.firstNameInput.name] || ''} 
             onChange={this.handleTextInputChange}>
             </input>
           </label>
@@ -131,7 +138,7 @@ class App extends React.Component {
             Email:
             <input id='emailInput' name={this.inputData.emailInput.name} type='email' value={this.state.inputs[this.inputData.emailInput.name] || ''} onChange={this.handleTextInputChange}>
             </input>
-            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] ? 'active-error' : 'inactive-error'}>* Please enter a valid email address.</div>
+            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-error'}>* Please enter a valid email address.</div>
           </label>
 
           <label>
@@ -139,6 +146,9 @@ class App extends React.Component {
             <input id='orgInput' name={this.inputData.orgInput.name} type='text' value={this.state.inputs[this.inputData.orgInput.name] || ''} onChange={this.handleTextInputChange}>
             </input>
           </label>
+        </div>
+        <div>
+          <input type='button' value='Create new user' onClick={this.handleNewUserSubmit} ></input>
         </div>
         <div>
           <table>
