@@ -19,11 +19,11 @@ class App extends React.Component {
     this.handleUserDelete = this.handleUserDelete.bind(this);
   }
 
-  inputNames = {
-    firstName: 'firstNameInput',
-    lastName: 'lastNameInput',
-    email: 'emailInput',
-    org: 'orgInput'
+  inputData = {
+    firstNameInput: {name: 'firstNameInput', func: Validation.requiredValidName},
+    lastNameInput: {name: 'lastNameInput', func: Validation.requiredValidName},
+    emailInput: {name: 'emailInput', func: Validation.requiredValidEmail},
+    orgInput: {name: 'orgInput', func: Validation.requiredValidOrg}
   }
 
   componentDidMount() {
@@ -50,16 +50,11 @@ class App extends React.Component {
   handleTextInputChange(e) {
     let inputDict = this.state.inputs;
     let errors = this.state.inputErrors;
-    
-    //TODO: figure out how to store validation functions in a dictionary
-    //to get rid of element name checks (ran into trouble with 'this' scope
-    //and functions being undefined).
-    if (e.target.name === this.inputNames.email) {
-      if (!Validation().requiredValidEmail(e.target.value)) {
-        errors[e.target.name] = true;
-      } else {
-        errors[e.target.name] = false;
-      }
+
+    if (this.inputData[e.target.name].func(e.target.value)) {
+      errors[e.target.name] = false;
+    } else {
+      errors[e.target.name] = true;
     }
 
     inputDict[e.target.name] = e.target.value;
@@ -116,8 +111,8 @@ class App extends React.Component {
           <span>
           <label>
             First Name:
-            <input id='firstNameInput' name={this.inputNames.firstName} type='text' 
-            value={this.state.inputs[this.inputNames.firstName]  || ''} 
+            <input id='firstNameInput' name={this.inputData.firstNameInput.name} type='text' 
+            value={this.state.inputs[this.inputData.firstNameInput.name]  || ''} 
             onChange={this.handleTextInputChange}>
             </input>
           </label>
@@ -126,23 +121,22 @@ class App extends React.Component {
 
           <label>
             Last Name:
-            <input id='lastNameInput' name={this.inputNames.lastName} type='text' 
-            value={this.state.inputs[this.inputNames.lastName]  || ''} 
+            <input id='lastNameInput' name={this.inputData.lastNameInput.name} type='text' 
+            value={this.state.inputs[this.inputData.lastNameInput.name]  || ''} 
             onChange={this.handleTextInputChange}>
             </input>
           </label>
         
           <label>
             Email:
-            <input id='emailInput' name={this.inputNames.email} type='email' value={this.state.inputs[this.inputNames.email] || ''} onChange={this.handleTextInputChange}>
+            <input id='emailInput' name={this.inputData.emailInput.name} type='email' value={this.state.inputs[this.inputData.emailInput.name] || ''} onChange={this.handleTextInputChange}>
             </input>
-            {/* <div id='emailError' name='emailError' style={this.state.inputErrors[this.inputNames.email] !== 'undefined' ? display:'none' : display: 'block'}>* Please enter a valid email address.</div> */}
-            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputNames.email] ? 'active-error' : 'inactive-error'}>* Please enter a valid email address.</div>
+            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] ? 'active-error' : 'inactive-error'}>* Please enter a valid email address.</div>
           </label>
 
           <label>
             Organization:
-            <input id='orgInput' name={this.inputNames.org} type='text' value={this.state.inputs[this.inputNames.org] || ''} onChange={this.handleTextInputChange}>
+            <input id='orgInput' name={this.inputData.orgInput.name} type='text' value={this.state.inputs[this.inputData.orgInput.name] || ''} onChange={this.handleTextInputChange}>
             </input>
           </label>
         </div>

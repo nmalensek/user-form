@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 //This is only here because create-react-app doesn't allow references
 //to files outside its src directory. Once everything's configured,
 //this file will be moved to the 'common' dir.
-const validationFuncs = require('../client/src/Validation')();
+const validationFuncs = require('../client/src/Validation');
 
 //using a file as a simple database for the moment, make sure the file's there.
 const dataPath = './model/user-entries/user.entries.json';

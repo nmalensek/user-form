@@ -1,8 +1,4 @@
-module.exports = function() {
     class Validation {
-        constructor() {
-            this.hasStringInput = this.hasStringInput.bind(this);
-        }
         static test() {
             console.log('test validation');
         }
@@ -15,7 +11,7 @@ module.exports = function() {
         static requiredValidEmail(email) {
             //from: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
             const emailExpression = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-            if (this.hasStringInput(email)) {
+            if (Validation.hasStringInput(email)) {
                 if (email.match(emailExpression) !== null) {
                     return true;
                 }
@@ -24,7 +20,7 @@ module.exports = function() {
         }
         static requiredValidName(name) {
             const nameExpression = /^[a-zA-Z][-']?/;
-            if (this.hasStringInput(name)) {
+            if (Validation.hasStringInput(name)) {
                 let matches = name.match(nameExpression);
                 if (matches !== null && matches.length === 1) {
                     return true;
@@ -34,7 +30,7 @@ module.exports = function() {
         }
         static requiredValidOrg(org) {
             const orgExpression = /^[a-zA-Z][-'()]?/;
-            if (this.hasStringInput(org)) {
+            if (Validation.hasStringInput(org)) {
                 let matches = org.match(orgExpression);
                 if (matches !== null && matches.length === 1) {
                     return true;
@@ -44,5 +40,4 @@ module.exports = function() {
         }
     }
 
-     return Validation;
-}
+    module.exports = Validation;
