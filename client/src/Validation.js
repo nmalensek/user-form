@@ -19,22 +19,22 @@
             return false;
         }
         static requiredValidName(name) {
-            const nameExpression = /^[a-zA-Z][-']?/;
+            //const nameExpression = /^[a-zA-Z][-']?/;
             if (Validation.hasStringInput(name)) {
-                let matches = name.match(nameExpression);
-                if (matches !== null && matches.length === 1) {
+                // let matches = name.match(nameExpression);
+                // if (matches !== null && matches.length === 1) {
                     return true;
-                }
+                //}
             }
             return false;
         }
         static requiredValidOrg(org) {
-            const orgExpression = /^[a-zA-Z][-'()]?/;
+            //const orgExpression = /^[a-zA-Z][-'()]?/;
             if (Validation.hasStringInput(org)) {
-                let matches = org.match(orgExpression);
-                if (matches !== null && matches.length === 1) {
+                // let matches = org.match(orgExpression);
+                // if (matches !== null && matches.length === 1) {
                     return true;
-                }
+                //}
             }
             return false;
         }
