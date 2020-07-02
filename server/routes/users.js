@@ -14,7 +14,11 @@ module.exports = function(userModel, express, validation, logger) {
   });
 
   router.post('/', validateNewUser(), function(req, res, next) {
-    
+    let errors = validation.validationResult(req).errors;
+    if (errors.length !== 0) {
+        return res.status(422).json({errors: errors});
+    }
+    return res.status(200).send();
   });
 
   router.put('/:userid', function(req, res, next) {
@@ -22,7 +26,7 @@ module.exports = function(userModel, express, validation, logger) {
   });
 
   router.delete('/:userid', function(req, res, next) {
-    return req;
+    //return req;
   });
 
   function validateNewUser() {

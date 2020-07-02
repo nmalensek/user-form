@@ -72,23 +72,29 @@ class App extends React.Component {
 
     Object.keys(this.state.inputs).forEach((val) => {
       if (this.inputData[val].func(this.state.inputs[val])) {
-        delete errors[e.target.name];
+        delete errors[val];
       } else {
-        errors[e.target.name] = true;
+        errors[val] = true;
       }
     });
 
     if (Object.keys(this.state.inputErrors).length !== 0) {
       this.setState({triedToSubmit: true});
-      return;
+    //  return;
     }
-
+    console.log('send post');
     axios.post('/users', this.createNewUserFromInputs())
-      .then(resp => {
-        //display success message.
+      .then(() => {
+        this.setState({submissionSuccessful: true})
       })
       .catch(err => {
-        //show error message on UI.
+        //server response contains errors, display an error message.
+        let errorMessage = 'An error occurred while processing your request, please check the following issues: ';
+        err.response.data.errors.forEach(err => {
+          //todo: fix this so each error's on a new line.
+            errorMessage += err.msg + '\n';
+        });
+        this.setState({submissionErrorText: errorMessage});
       });
   }
 
@@ -136,7 +142,7 @@ class App extends React.Component {
             </input>
           </label>
           </span>
-          <div id='firstNameError' name='firstNameError' className={this.state.inputErrors[this.inputData.firstNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-error'}>* Please enter a first name.</div>
+          <div id='firstNameError' name='firstNameError' className={this.state.inputErrors[this.inputData.firstNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>* Please enter a first name.</div>
           <span>
           <label>
             Last Name:
@@ -145,7 +151,7 @@ class App extends React.Component {
             onChange={this.handleTextInputChange}>
             </input>
           </label>
-          <div id='lastNameError' name='lastNameError' className={this.state.inputErrors[this.inputData.lastNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-error'}>* Please enter a last name.</div>
+          <div id='lastNameError' name='lastNameError' className={this.state.inputErrors[this.inputData.lastNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>* Please enter a last name.</div>
           </span>
           </div>
 
@@ -155,7 +161,7 @@ class App extends React.Component {
             Email:
             <input id='emailInput' name={this.inputData.emailInput.name} type='email' value={this.state.inputs[this.inputData.emailInput.name]} onChange={this.handleTextInputChange}>
             </input>
-            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-error'}>* Please enter a valid email address.</div>
+            <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>* Please enter a valid email address.</div>
           </label>
             </span>
             <span>
@@ -165,12 +171,17 @@ class App extends React.Component {
             <input id='orgInput' name={this.inputData.orgInput.name} type='text' value={this.state.inputs[this.inputData.orgInput.name]} onChange={this.handleTextInputChange}>
             </input>
           </label>
-              <div id='orgError' name='orgError' className={this.state.inputErrors[this.inputData.orgInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-error'}>* Please enter an organization name.</div>
+              <div id='orgError' name='orgError' className={this.state.inputErrors[this.inputData.orgInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>* Please enter an organization name.</div>
             </span>
           </div>
         </div>
         <div>
           <input type='button' value='Create new user' onClick={this.handleNewUserSubmit} ></input>
+        </div>
+        <div>
+          <span className={'user-submission ' + (this.state.submissionErrorText ? 'failure' : 'success')}>
+          {this.state.submissionSuccessful ? 'User created successfully!' : this.state.submissionErrorText}
+          </span>
         </div>
         <div>
           <table>

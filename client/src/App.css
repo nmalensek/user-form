@@ -41,11 +41,26 @@ body {
   }
 }
 
-.inactive-error {
+.inactive-message {
   display: none;
 }
 
 .active-error {
   display: inline-block;
+  color: darkred;
+}
+
+.user-submission {
+  display: none;
+}
+
+.user-submission.success {
+  display: inline;
+  color: green;
+  font-weight: bold;
+}
+
+.user-submission.failure {
+  display: inline;
   color: darkred;
 }
