@@ -31,10 +31,17 @@ module.exports = function(userModel, express, validation, logger) {
 
   function validateNewUser() {
     return [
-      validation.body('email', 'Email is missing or has an invalid format.').exists().isEmail().normalizeEmail(),
-      validation.body('firstName', 'First name is missing or contains invalid characters.').exists().trim().escape(),
-      validation.body('lastName', 'Last name is missing or contains invalid characters.').exists().trim().escape(),
-      validation.body('organization', 'Organization is missing or contains invalid characters.').exists().trim().escape()
+      validation.body('email', 'Email is missing or has an invalid format.')
+      .exists().isEmail().normalizeEmail(),
+      
+      validation.body('firstName', 'First name is missing or contains invalid characters.')
+      .exists().isLength({min: 1, max: 500}).trim().escape(),
+      
+      validation.body('lastName', 'Last name is missing or contains invalid characters.')
+      .exists().isLength({min: 1, max: 500}).trim().escape(),
+      
+      validation.body('organization', 'Organization is missing or contains invalid characters.')
+      .exists().isLength({min: 1, max: 500}).trim().escape()
     ] 
   }
 

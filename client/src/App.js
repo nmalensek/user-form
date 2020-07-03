@@ -11,7 +11,8 @@ class App extends React.Component {
       users: [],
       inputs: {},
       inputErrors: {},
-      triedToSubmit: false
+      triedToSubmit: false,
+      submissionServerErrors: []
     }
 
     let newErrors = {};
@@ -80,21 +81,22 @@ class App extends React.Component {
 
     if (Object.keys(this.state.inputErrors).length !== 0) {
       this.setState({triedToSubmit: true});
-    //  return;
+      return;
     }
     console.log('send post');
     axios.post('/users', this.createNewUserFromInputs())
       .then(() => {
-        this.setState({submissionSuccessful: true})
+        this.setState({submissionSuccessful: true,
+          submissionServerErrors: []
+        });
       })
       .catch(err => {
-        //server response contains errors, display an error message.
-        let errorMessage = 'An error occurred while processing your request, please check the following issues: ';
+        let errorMessage = [];
+        errorMessage.push('An error occurred while processing your request, please check the following issues: ');
         err.response.data.errors.forEach(err => {
-          //todo: fix this so each error's on a new line.
-            errorMessage += err.msg + '\n';
+            errorMessage.push(err.msg);
         });
-        this.setState({submissionErrorText: errorMessage});
+        this.setState({submissionServerErrors: errorMessage});
       });
   }
 
@@ -122,7 +124,13 @@ class App extends React.Component {
           editFunc={this.handleUserChange}
         />
       )
-    })
+    });
+
+    const serverErrors = this.state.submissionServerErrors.map((err) => {
+      return (
+        <p>- {err}</p>
+      )
+    });
 
     return (
       <div className='App'>
@@ -178,10 +186,9 @@ class App extends React.Component {
         <div>
           <input type='button' value='Create new user' onClick={this.handleNewUserSubmit} ></input>
         </div>
-        <div>
-          <span className={'user-submission ' + (this.state.submissionErrorText ? 'failure' : 'success')}>
-          {this.state.submissionSuccessful ? 'User created successfully!' : this.state.submissionErrorText}
-          </span>
+        <div className={'user-submission ' + (this.state.submissionSuccessful ? 'success' : 'failure')}>
+            {this.state.submissionServerErrors.length > 0 ? serverErrors : ''}
+            {this.state.submissionSuccessful ? 'User created successfully!' : ''}
         </div>
         <div>
           <table>
