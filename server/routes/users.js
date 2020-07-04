@@ -18,7 +18,12 @@ module.exports = function(userModel, express, validation, logger) {
     if (errors.length !== 0) {
         return res.status(422).json({errors: errors});
     }
-    return res.status(200).send();
+    return userModel.addUser(req.body, (error) => {
+          if(error) {
+            return res.status(500).json({errors: error});
+          }
+          return res.status(200).send();
+      });
   });
 
   router.put('/:userid', function(req, res, next) {

@@ -3,17 +3,19 @@ module.exports = function(userFile, fse, logger) {
         
     };
     
-    function User(firstName, lastName, org, email) {
+    function User(id, firstName, lastName, organization, email) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.organization = org;
+        this.organization = organization;
         this.email = email;
     }
     
+    /*
+        just use single file containing all users 'til everything's working, then convert to mongo.
+        TODO: get subset, make UI paginated.
+    */
     UserOps.getUsers = function(cb) {
-        //open file and load all users.
-        //just use single file containing all users 'til everything's working, then convert to mongo.
-        //TODO: get subset, make UI paginated.
         return fse.readJSON(userFile)
         .then(data => {
             cb(null, Object.values(data));  
@@ -24,11 +26,24 @@ module.exports = function(userFile, fse, logger) {
         });
     }
 
-    UserOps.addUser = function(userFile, cb) {
-        
+    UserOps.addUser = function(newUser, cb) {
+        return fse.readJSON(userFile)
+        .then(data => {
+            let userId = Math.max(Object.keys(data)) + 1;
+            data[userId] = new User(
+                userId, newUser.firstName, newUser.lastName, newUser.organization, newUser.email);
+            return fse.writeJson(userFile, data)
+            .then(() => {
+                cb(null);
+            });
+        })
+        .catch(err => {
+            logger.error(err.message + ' ' + err.stack);
+            cb(err);
+        });
     }
     
-    UserOps.editUser = function(userFile, id, cb) {
+    UserOps.editUser = function(id, cb) {
 
     }
 

@@ -78,24 +78,45 @@ class App extends React.Component {
         errors[val] = true;
       }
     });
+    this.setState({inputErrors: errors});
 
     if (Object.keys(this.state.inputErrors).length !== 0) {
       this.setState({triedToSubmit: true});
       return;
     }
-    console.log('send post');
+
     axios.post('/users', this.createNewUserFromInputs())
       .then(() => {
         this.setState({submissionSuccessful: true,
           submissionServerErrors: []
         });
+        this.getAllUsers();
       })
       .catch(err => {
         let errorMessage = [];
         errorMessage.push('An error occurred while processing your request, please check the following issues: ');
-        err.response.data.errors.forEach(err => {
-            errorMessage.push(err.msg);
-        });
+
+        if (err.response) {
+          if (err.response.data && err.response.data.errors) {
+            switch (typeof err.response.data.errors) {
+                case Array:
+                  err.response.data.errors.forEach(err => {
+                    errorMessage.push(err.msg);
+                  });
+                  break;
+                case String:
+                  errorMessage.push(err.response.data.errors);
+                  break;
+                default:
+                  errorMessage.push('An unexpected error occurred, please check your input or try again later.');
+            }
+          } else {
+            errorMessage.push(err.response);
+          }
+        } else {
+          errorMessage.push('Unable to contact the server, please check your connection or try again later.');
+        }
+        
         this.setState({submissionServerErrors: errorMessage});
       });
   }
@@ -128,7 +149,7 @@ class App extends React.Component {
 
     const serverErrors = this.state.submissionServerErrors.map((err) => {
       return (
-        <p>- {err}</p>
+        <p>{err}</p>
       )
     });
 
