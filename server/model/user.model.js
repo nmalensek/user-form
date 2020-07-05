@@ -22,7 +22,7 @@ module.exports = function(userFile, fse, logger) {
         })
         .catch(err => {
             cb(err, null);
-            logger.error(err);
+            logger.error(err.message + ' ' + err.stack);
         });
     }
 
@@ -32,7 +32,7 @@ module.exports = function(userFile, fse, logger) {
             let userId = Math.max(Object.keys(data)) + 1;
             data[userId] = new User(
                 userId, newUser.firstName, newUser.lastName, newUser.organization, newUser.email);
-            return fse.writeJson(userFile, data)
+            return fse.writeJson(userFile)
             .then(() => {
                 cb(null);
             });

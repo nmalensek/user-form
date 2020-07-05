@@ -9,7 +9,7 @@ const logger = new winston.createLogger({
   level: 'debug',
   transports: [
     new (winston.transports.File)({ filename: 'user_form.log', maxsize: 10000000}),
-  ],
+  ]
 });
 
 // log to console during dev
@@ -19,6 +19,8 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
+const loggerWrapper = require('./errorWrapper')(logger);
+
 //using a file as a simple database for the moment, make sure the file's there.
 const dataPath = './model/user-entries/user.entries.json';
 fse.ensureFileSync(dataPath);
@@ -27,9 +29,9 @@ const express = require('express');
 const app = express();
 
 //user page will be the index.
-const userModel = require('./model/user.model')(dataPath, fse, logger);
+const userModel = require('./model/user.model')(dataPath, fse, loggerWrapper);
 const usersRouter = require('./routes/users')(
-                    userModel, express, validation, logger);
+                    userModel, express, validation, loggerWrapper);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,7 +59,7 @@ const server = app.listen(8080);
 console.log('server initialized and listening...');
 
 process.on('SIGINT', () => {
-  logger.error('closing server');
+  loggerWrapper.error('closing server');
   process.exit();
 });
 
