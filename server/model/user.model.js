@@ -32,7 +32,7 @@ module.exports = function(userFile, fse, logger) {
             let userId = Math.max(Object.keys(data)) + 1;
             data[userId] = new User(
                 userId, newUser.firstName, newUser.lastName, newUser.organization, newUser.email);
-            return fse.writeJson(userFile)
+            return fse.writeJson(userFile, data)
             .then(() => {
                 cb(null);
             });
