@@ -1,7 +1,5 @@
 module.exports = function(userFile, fse, logger) {
-    function UserOps() {
-        
-    };
+    function UserOps() {};
     
     function User(id, firstName, lastName, organization, email) {
         this.id = id;
@@ -29,7 +27,12 @@ module.exports = function(userFile, fse, logger) {
     UserOps.addUser = function(newUser, cb) {
         return fse.readJSON(userFile)
         .then(data => {
-            let userId = Math.max(Object.keys(data)) + 1;
+            let userId = Math.max(...Object.values(data).map(u => u.id)) + 1;
+            
+            if (Number.isNaN(userId)) {
+                throw new Error('Error calculating new user ID.');
+            }
+            
             data[userId] = new User(
                 userId, newUser.firstName, newUser.lastName, newUser.organization, newUser.email);
             return fse.writeJson(userFile, data)

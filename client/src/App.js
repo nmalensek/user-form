@@ -12,18 +12,14 @@ class App extends React.Component {
       inputs: {},
       inputErrors: {},
       triedToSubmit: false,
+      submissionSuccessful: false,
       submissionServerErrors: []
     }
 
-    let newErrors = {};
-    let newInputDict = {};
-    Object.values(this.inputData).forEach((val) => {
-      newErrors[val.name] = true
-      newInputDict[val.name] = ''
-    });
-    this.state.inputErrors = newErrors;
-    this.state.inputs = newInputDict;
-
+    let dicts = this.resetInputDicts(this.inputData);
+    
+    this.state.inputErrors = dicts.errorDict;
+    this.state.inputs = dicts.inputDict;
 
     this.handleTextInputChange = this.handleTextInputChange.bind(this);
     this.handleNewUserSubmit = this.handleNewUserSubmit.bind(this);
@@ -31,11 +27,42 @@ class App extends React.Component {
     this.handleUserDelete = this.handleUserDelete.bind(this);
   }
 
+  // inputs are tracked based on their name tag values. Storing validation functions
+  // in a dictionary to make validation code easier to write.
   inputData = {
     firstNameInput: {name: 'firstNameInput', func: Validation.requiredValidName},
     lastNameInput: {name: 'lastNameInput', func: Validation.requiredValidName},
     emailInput: {name: 'emailInput', func: Validation.requiredValidEmail},
     orgInput: {name: 'orgInput', func: Validation.requiredValidOrg}
+  }
+
+/*
+    set inputs having errors as true (all are required for successful submission)
+    and set input values to empty strings so they're managed components for their entire lifecycle. Use this in the constructor and on successful form submission.
+*/
+  resetInputDicts(source) {
+    let newErrors = {};
+    let newInputDict = {};
+    Object.values(source).forEach((val) => {
+      newErrors[val.name] = true
+      newInputDict[val.name] = ''
+    });
+
+    return {
+      errorDict: newErrors,
+      inputDict: newInputDict
+    };
+  }
+
+  resetForm() {
+    let newDicts = this.resetInputDicts(this.inputData);
+
+    this.setState({
+      inputErrors: newDicts.errorDict,
+      inputs: newDicts.inputDict,
+      triedToSubmit: false,
+      submissionServerErrors: []
+    });
   }
 
   componentDidMount() {
@@ -67,7 +94,7 @@ class App extends React.Component {
     });
   }
 
-  handleNewUserSubmit(e) {
+  handleNewUserSubmit() {
     //only show validation errors when a user tries to submit the form.
     let errors = this.state.inputErrors;
 
@@ -81,15 +108,17 @@ class App extends React.Component {
     this.setState({inputErrors: errors});
 
     if (Object.keys(this.state.inputErrors).length !== 0) {
-      this.setState({triedToSubmit: true});
+      this.setState({
+        triedToSubmit: true,
+        submissionSuccessful: false
+      });
       return;
     }
 
     axios.post('/users', this.createNewUserFromInputs())
       .then(() => {
-        this.setState({submissionSuccessful: true,
-          submissionServerErrors: []
-        });
+        this.setState({submissionSuccessful: true});
+        this.resetForm();
         this.getAllUsers();
       })
       .catch(err => {
@@ -97,6 +126,7 @@ class App extends React.Component {
         errorMessage.push('An error occurred while processing your request, please check the following issues: ');
 
         if (err.response) {
+          //if an error occurs with server-side validation, an array of those errors is returned. If a different kind of error occurs, it'll be a string.
           if (err.response.data && err.response.data.errors) {
             switch (typeof err.response.data.errors) {
                 case Array:
@@ -116,7 +146,6 @@ class App extends React.Component {
         } else {
           errorMessage.push('Unable to contact the server, please check your connection or try again later.');
         }
-        
         this.setState({submissionServerErrors: errorMessage});
       });
   }
@@ -128,7 +157,9 @@ class App extends React.Component {
   }
 
   handleUserChange(id, e) {
-    
+    axios.put('/users/' + id).then(
+      //probably refactor user creation function at least partially to reuse it here.
+    );
   }
 
   render() {
