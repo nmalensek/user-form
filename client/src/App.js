@@ -146,7 +146,11 @@ class App extends React.Component {
         } else {
           errorMessage.push('Unable to contact the server, please check your connection or try again later.');
         }
-        this.setState({submissionServerErrors: errorMessage});
+        this.setState({
+          submissionServerErrors: errorMessage,
+          submissionSuccessful: false,
+          triedToSubmit: true
+        });
       });
   }
 
