@@ -107,4 +107,4 @@ client/public/robots.txt
 client/src/logo.svg
 client/README.md
 
-server/model/user-entries/user.entries.json
+server/model/user-entries/

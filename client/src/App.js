@@ -182,9 +182,9 @@ class App extends React.Component {
       )
     });
 
-    const serverErrors = this.state.submissionServerErrors.map((err) => {
+    const serverErrors = this.state.submissionServerErrors.map((err, ind) => {
       return (
-        <p>{err}</p>
+        <p key={ind}>{err}</p>
       )
     });
 
