@@ -1,7 +1,4 @@
     class Validation {
-        static test() {
-            console.log('test validation');
-        }
         static hasStringInput(input) {
             if (!input || typeof input !== 'string' || input.length === 0) {
                 return false;
