@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios';
 import SearchResult from './SearchResult.js';
 import Validation from './Validation.js';
+import * as Constants from './StringMessages.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class App extends React.Component {
       inputErrors: {},
       triedToSubmit: false,
       submissionSuccessful: false,
-      submissionServerErrors: []
+      submissionServerErrors: [],
+      actionCompleteMessage: ''
     }
 
     let dicts = this.resetInputDicts(this.inputData);
@@ -25,6 +27,10 @@ class App extends React.Component {
     this.handleNewUserSubmit = this.handleNewUserSubmit.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleUserDelete = this.handleUserDelete.bind(this);
+  }
+
+  componentDidMount() {
+    this.getAllUsers();
   }
 
   // inputs are tracked based on their name tag values. Storing validation functions
@@ -63,10 +69,6 @@ class App extends React.Component {
       triedToSubmit: false,
       submissionServerErrors: []
     });
-  }
-
-  componentDidMount() {
-    this.getAllUsers();
   }
 
   createNewUserFromInputs() {
@@ -117,53 +119,80 @@ class App extends React.Component {
 
     axios.post('/users', this.createNewUserFromInputs())
       .then(() => {
-        this.setState({submissionSuccessful: true});
+        this.setState({
+          submissionSuccessful: true,
+          actionCompleteMessage: Constants.userAdded
+        });
         this.resetForm();
         this.getAllUsers();
       })
       .catch(err => {
-        let errorMessage = [];
-        errorMessage.push('An error occurred while processing your request, please check the following issues: ');
+        let errors = this.getServerErrorAsArray(err);
 
-        if (err.response) {
-          //if an error occurs with server-side validation, an array of those errors is returned. If a different kind of error occurs, it'll be a string.
-          if (err.response.data && err.response.data.errors) {
-            switch (typeof err.response.data.errors) {
-                case Array:
-                  err.response.data.errors.forEach(err => {
-                    errorMessage.push(err.msg);
-                  });
-                  break;
-                case String:
-                  errorMessage.push(err.response.data.errors);
-                  break;
-                default:
-                  errorMessage.push('An unexpected error occurred, please check your input or try again later.');
-            }
-          } else {
-            errorMessage.push(err.response);
-          }
-        } else {
-          errorMessage.push('Unable to contact the server, please check your connection or try again later.');
-        }
         this.setState({
-          submissionServerErrors: errorMessage,
+          submissionServerErrors: errors,
           submissionSuccessful: false,
           triedToSubmit: true
         });
       });
   }
 
-  handleUserDelete(id, e) {
-    axios.delete('/users/' + id).then(
-      //display success message.
-    );
+  handleUserDelete(id, fullName, e) {
+    axios.delete('/users/' + id)
+    .then(() => {
+        this.setState({
+          submissionSuccessful: true,
+          actionCompleteMessage: Constants.getPersonalizedUserDeletedMessage(fullName),
+          submissionServerErrors: []
+        });
+        this.getAllUsers();
+      })
+    .catch(err => {
+      let errors = this.getServerErrorAsArray(err);
+      
+      this.setState({
+        submissionServerErrors: errors,
+        submissionSuccessful: false,
+      });
+    });
   }
 
   handleUserChange(id, e) {
     axios.put('/users/' + id).then(
       //probably refactor user creation function at least partially to reuse it here.
     );
+  }
+
+  getServerErrorAsArray(err) {
+    let errorMessage = [];
+    errorMessage.push('An error occurred while processing your request, please check the following issues: ');
+
+    if (err.response) {
+      //if an error occurs with server-side validation, an array of those errors is returned. If a different kind of error occurs, it'll be a string.
+      if (err.response.data && err.response.data.errors) {
+        let errorData = err.response.data.errors;
+        switch (typeof errorData) {
+            case 'object':
+              if (Array.isArray(errorData)) {
+                errorData.forEach(err => {
+                  errorMessage.push(err.msg);
+                });
+              }
+              break;
+            case 'string':
+              errorMessage.push(errorData);
+              break;
+            default:
+              errorMessage.push(Constants.unexpectedError);
+        }
+      } else {
+        errorMessage.push(err.response);
+      }
+    } else {
+      errorMessage.push(Constants.connectionError);
+    }
+
+    return errorMessage;
   }
 
   render() {
@@ -229,7 +258,6 @@ class App extends React.Component {
           </label>
             </span>
             <span>
-
           <label>
             Organization:
             <input id='orgInput' name={this.inputData.orgInput.name} type='text' value={this.state.inputs[this.inputData.orgInput.name]} onChange={this.handleTextInputChange}>
@@ -243,8 +271,8 @@ class App extends React.Component {
           <input type='button' value='Create new user' onClick={this.handleNewUserSubmit} ></input>
         </div>
         <div className={'user-submission ' + (this.state.submissionSuccessful ? 'success' : 'failure')}>
+            {this.state.submissionSuccessful ? this.state.actionCompleteMessage : ''}
             {this.state.submissionServerErrors.length > 0 ? serverErrors : ''}
-            {this.state.submissionSuccessful ? 'User created successfully!' : ''}
         </div>
         <div>
           <table>

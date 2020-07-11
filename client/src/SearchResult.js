@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 
 class SearchResult extends React.Component {
-
+    fullName = this.props.firstName + ' ' + this.props.lastName;
     render() {
         return (
             <tr>
@@ -22,7 +22,7 @@ class SearchResult extends React.Component {
                     <input type="button" onClick={this.props.editFunc.bind(this, this.props.id)} value="Edit"></input>
                 </td>
                 <td>
-                    <input type="button" onClick={this.props.deleteFunc.bind(this, this.props.id)} value="Delete"></input>
+                    <input type="button" onClick={this.props.deleteFunc.bind(this, this.props.id, this.fullName)} value="Delete"></input>
                 </td>
             </tr>
         )

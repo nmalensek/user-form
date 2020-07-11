@@ -51,7 +51,21 @@ module.exports = function(userFile, fse, logger) {
     }
 
     UserOps.deleteUser = function(id, cb) {
-
+        return fse.readJSON(userFile)
+        .then(data => {
+            if (data[id] == undefined) {
+                throw new Error('Could not find specified user in database.');
+            }
+            delete data[id];
+            return fse.writeJson(userFile, data)
+            .then(() => {
+                cb(null);
+            });
+        })
+        .catch(err => {
+            logger.error(err.message + ' ' + err.stack);
+            cb(err);
+        });
     }
     
     return UserOps;
