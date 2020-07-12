@@ -81,6 +81,8 @@ class App extends React.Component {
     }
   }
 
+  //if a user has a single quote in their name, it won't render correctly unless the HTML is decoded.
+  //decodes each object's properties and modifies the given array in-place. This method does not execute script tags if present.
   decodeObjectProperties(objectArray) {
     let doc = new DOMParser()
     
@@ -93,10 +95,9 @@ class App extends React.Component {
 
   getAllUsers() {
     axios.get('/users').then(res => {
-      let arr = res.data;
-      this.decodeObjectProperties(arr);
+      this.decodeObjectProperties(res.data);
       this.setState({
-        users: arr
+        users: res.data
       });
     });
   // fetch('/users').then(res => {
