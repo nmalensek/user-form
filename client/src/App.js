@@ -4,6 +4,7 @@ import axios from 'axios';
 import SearchResult from './SearchResult.js';
 import Validation from './Validation.js';
 import * as Constants from './StringMessages.js';
+import ProcessServerError from "./ProcessServerError";
 
 class App extends React.Component {
   constructor(props) {
@@ -127,7 +128,7 @@ class App extends React.Component {
         this.getAllUsers();
       })
       .catch(err => {
-        let errors = this.getServerErrorAsArray(err);
+        let errors = ProcessServerError.getServerErrorAsArray(err, Constants);
 
         this.setState({
           submissionServerErrors: errors,
@@ -148,7 +149,7 @@ class App extends React.Component {
         this.getAllUsers();
       })
     .catch(err => {
-      let errors = this.getServerErrorAsArray(err);
+      let errors = ProcessServerError.getServerErrorAsArray(err, Constants);
       
       this.setState({
         submissionServerErrors: errors,
@@ -161,38 +162,6 @@ class App extends React.Component {
     axios.put('/users/' + id).then(
       //probably refactor user creation function at least partially to reuse it here.
     );
-  }
-
-  getServerErrorAsArray(err) {
-    let errorMessage = [];
-    errorMessage.push('An error occurred while processing your request, please check the following issues: ');
-
-    if (err.response) {
-      //if an error occurs with server-side validation, an array of those errors is returned. If a different kind of error occurs, it'll be a string.
-      if (err.response.data && err.response.data.errors) {
-        let errorData = err.response.data.errors;
-        switch (typeof errorData) {
-            case 'object':
-              if (Array.isArray(errorData)) {
-                errorData.forEach(err => {
-                  errorMessage.push(err.msg);
-                });
-              }
-              break;
-            case 'string':
-              errorMessage.push(errorData);
-              break;
-            default:
-              errorMessage.push(Constants.unexpectedError);
-        }
-      } else {
-        errorMessage.push(err.response);
-      }
-    } else {
-      errorMessage.push(Constants.connectionError);
-    }
-
-    return errorMessage;
   }
 
   render() {
