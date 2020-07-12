@@ -1,6 +1,8 @@
 module.exports = function(userModel, express, validation, logger) {
   const router = express.Router();
 
+  let maxId = userModel.getLargestId();
+
   /* GET users listing using the model. */
   router.get('/', function(req, res, next) {
       return userModel.getUsers(

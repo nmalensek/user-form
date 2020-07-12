@@ -8,6 +8,16 @@ module.exports = function(userFile, fse, logger) {
         this.organization = organization;
         this.email = email;
     }
+
+    UserOps.getLargestId = function() {
+        return fse.readJSON(userFile)
+        .then((data) => {
+            return Math.max(...Object.values(data).map(u => u.id))
+        })
+        .catch(err => {
+            logger.error(err);
+        })
+    }
     
     /*
         just use single file containing all users 'til everything's working, then convert to mongo.
@@ -20,7 +30,7 @@ module.exports = function(userFile, fse, logger) {
         })
         .catch(err => {
             cb(err, null);
-            logger.error(err.message + ' ' + err.stack);
+            logger.error(err);
         });
     }
 
@@ -41,7 +51,7 @@ module.exports = function(userFile, fse, logger) {
             });
         })
         .catch(err => {
-            logger.error(err.message + ' ' + err.stack);
+            logger.error(err);
             cb(err);
         });
     }
@@ -63,7 +73,7 @@ module.exports = function(userFile, fse, logger) {
             });
         })
         .catch(err => {
-            logger.error(err.message + ' ' + err.stack);
+            logger.error(err);
             cb(err);
         });
     }

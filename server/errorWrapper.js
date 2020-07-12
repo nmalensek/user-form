@@ -1,6 +1,6 @@
 module.exports = function(logger) {
-    function error(message, excludeTimestamp) {
-        log('error', message, excludeTimestamp);
+    function error(err, excludeTimestamp) {
+        log('error', err.message + ' ' + err.stack, excludeTimestamp);
     }
 
     function info(message, excludeTimestamp) {

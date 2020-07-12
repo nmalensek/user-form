@@ -59,7 +59,7 @@ const server = app.listen(8080);
 console.log('server initialized and listening...');
 
 process.on('SIGINT', () => {
-  loggerWrapper.error('closing server');
+  loggerWrapper.info('closing server');
   process.exit();
 });
 
