@@ -81,12 +81,32 @@ class App extends React.Component {
     }
   }
 
+  decodeObjectProperties(objectArray) {
+    let doc = new DOMParser()
+    
+    objectArray.forEach((item) => {
+      Object.keys(item).forEach((k) => {
+        item[k] = doc.parseFromString(item[k], 'text/html').documentElement.textContent;
+      });
+    }); 
+  }
+
   getAllUsers() {
     axios.get('/users').then(res => {
+      let arr = res.data;
+      this.decodeObjectProperties(arr);
       this.setState({
-        users: res.data
+        users: arr
       });
     });
+  // fetch('/users').then(res => {
+  //   return res.json()
+  // })
+  // .then(data => {
+  //   this.setState({
+  //     users: data
+  //   });
+  // });
   }
 
   handleTextInputChange(e) {
