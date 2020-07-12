@@ -1,8 +1,6 @@
 module.exports = function(userModel, express, validation, logger) {
   const router = express.Router();
 
-  let maxId = userModel.getLargestId();
-
   /* GET users listing using the model. */
   router.get('/', function(req, res, next) {
       return userModel.getUsers(
@@ -63,7 +61,6 @@ module.exports = function(userModel, express, validation, logger) {
   }
 
   function validateId() {
-    //TODO?: set max value to max saved ID so those get rejected here instead of at the model where it has to incur disk I/O to check.
     return [
       validation.param('userId', 'ID provided is not a valid user ID.')
       .isInt({min: 1}).escape()
