@@ -64,3 +64,22 @@ body {
   display: inline;
   color: darkred;
 }
+
+.edit-popup {
+  height: 400px;
+  width: 600px;
+  background-color: white;
+  position: fixed;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  border: 1px solid black;
+}
+.edit-popup.active {
+  display: block;
+}
+.edit-popup.inactive {
+  display: none;
+}
