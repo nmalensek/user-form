@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
+import BasicUserData from './BasicUserData';
 import SearchResult from './SearchResult.js';
 import DetailsWindow from './DetailsWindow.js';
 import Validation from './Validation.js';
@@ -182,16 +183,14 @@ class App extends React.Component {
     });
   }
 
-  //open the edit/details popup on edit button click and populate fields, don't change anything yet.
+  //open the edit/details popup on edit button click and populate fields, don't change anything yet. Using find is ok because ids are unique.
   handleEditClick(id, e) {
-    for (let user of this.state.users) {
-      if (user.id === id) {
-        this.setState({
-          editUser: user
-        });
-        break;
-      }
-    }
+    let userToEdit = this.state.users.find((user) => {
+      return user.id === id;
+    });
+    this.setState({
+      editUser: userToEdit
+    });
   }
 
   cancelEdit(e) {
@@ -232,57 +231,12 @@ class App extends React.Component {
           </h1>
         </div>
         <div className='newUser'>
-          <div>
-            <span>
-              <label>
-                First Name:
-                <input id='firstNameInput' name={this.inputData.firstNameInput.name} type='text' maxLength='200'
-                value={this.state.inputs[this.inputData.firstNameInput.name]} 
-                onChange={this.handleTextInputChange}>
-                </input>
-              </label>
-            </span>
-            <div id='firstNameError' name='firstNameError' className={this.state.inputErrors[this.inputData.firstNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>
-              * Please enter a first name.
-            </div>
-            
-            <span>
-            <label>
-              Last Name:
-              <input id='lastNameInput' name={this.inputData.lastNameInput.name} type='text' maxLength='200'
-              value={this.state.inputs[this.inputData.lastNameInput.name]} 
-              onChange={this.handleTextInputChange}>
-              </input>
-            </label>
-            <div id='lastNameError' name='lastNameError' className={this.state.inputErrors[this.inputData.lastNameInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>
-              * Please enter a last name.
-            </div>
-            </span>
-          </div>
-
-          <div>
-            <span>
-              <label>
-                Email:
-                <input id='emailInput' name={this.inputData.emailInput.name} type='email' value={this.state.inputs[this.inputData.emailInput.name]} onChange={this.handleTextInputChange}>
-                </input>
-                <div id='emailError' name='emailError' className={this.state.inputErrors[this.inputData.emailInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>
-                  * Please enter a valid email address.
-                </div>
-              </label>
-            </span>
-
-            <span>
-                <label>
-                  Organization:
-                  <input id='orgInput' name={this.inputData.orgInput.name} type='text' value={this.state.inputs[this.inputData.orgInput.name]} onChange={this.handleTextInputChange}>
-                  </input>
-                </label>
-                <div id='orgError' name='orgError' className={this.state.inputErrors[this.inputData.orgInput.name] && this.state.triedToSubmit ? 'active-error' : 'inactive-message'}>
-                  * Please enter an organization name.
-                </div>
-            </span>
-          </div>
+          <BasicUserData 
+            inputData={this.inputData}
+            inputs={this.state.inputs}
+            inputErrors={this.state.inputErrors}
+            handleTextInputChange={this.handleTextInputChange}
+          />
         </div>
 
         <div>
