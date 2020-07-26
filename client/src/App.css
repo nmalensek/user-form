@@ -77,9 +77,3 @@ body {
   z-index: 1;
   border: 1px solid black;
 }
-.edit-popup.active {
-  display: block;
-}
-.edit-popup.inactive {
-  display: none;
-}

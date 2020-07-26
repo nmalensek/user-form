@@ -30,6 +30,7 @@ class App extends React.Component {
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleUserDelete = this.handleUserDelete.bind(this);
+    this.cancelEdit = this.cancelEdit.bind(this);
   }
 
   componentDidMount() {
@@ -183,7 +184,20 @@ class App extends React.Component {
 
   //open the edit/details popup on edit button click and populate fields, don't change anything yet.
   handleEditClick(id, e) {
+    for (let user of this.state.users) {
+      if (user.id === id) {
+        this.setState({
+          editUser: user
+        });
+        break;
+      }
+    }
+  }
 
+  cancelEdit(e) {
+    this.setState({
+      editUser: null
+    });
   }
 
   handleUserChange(id, e) {
@@ -199,7 +213,7 @@ class App extends React.Component {
           key={ind}
           user={user}
           deleteFunc={this.handleUserDelete}
-          editFunc={this.handleUserChange}
+          editFunc={this.handleEditClick}
         />
       )
     });
@@ -280,10 +294,13 @@ class App extends React.Component {
             {this.state.submissionServerErrors.length > 0 ? serverErrors : ''}
         </div>
         
-        <DetailsWindow
+        {this.state.editUser && <DetailsWindow
           user={this.state.editUser}
+          editFunc={this.handleUserChange}
+          cancelFunc={this.cancelEdit}
         />
-
+        }
+        
         <div>
           <table>
             <tbody>
