@@ -26,7 +26,7 @@ class DetailsWindow extends React.Component {
                     />
                 </div>
                 <div>
-                    {/* <input type='button' value='Save Changes'></input> */}
+                    <input type='button' value='Save Changes' onClick={this.props.editFunc}></input>
                     <input type='button' value='Cancel' onClick={this.props.cancelFunc}></input>
                 </div>
             </div>

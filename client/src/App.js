@@ -96,17 +96,17 @@ class App extends React.Component {
   //Go through the given dictionary and return a dictionary of inputs with errors.
   //Remove inputs from the dictionary if they have a valid value for easier processing later.
   getErrorsFromInputDict(inputDict, targetDict, validationDict) {
-    //only show validation errors when a user tries to submit the form.
     let errors = targetDict;
-
-    Object.keys(inputDict).forEach((val) => {
-      if (validationDict[val].func(inputDict[val])) {
-        delete errors[val];
+    
+    Object.keys(validationDict).forEach((key) => {
+      let val = validationDict[key];
+      if(val.func(inputDict[val.name])) {
+        delete errors[val.name];
       } else {
-        errors[val] = true;
+        errors[val.name] = true;
       }
     });
-    
+
     return errors;
   }
 
@@ -201,16 +201,19 @@ class App extends React.Component {
     });
   }
 
-  //open the edit/details popup on edit button click and populate fields, don't change anything yet because user can still cancel out.
+  //open the edit/details popup on edit button click and populate fields, don't change anything yet because user can still cancel out. Reset edit state on each edit click.
   handleEditClick(id, e) {
     let userToEdit = this.state.users.find(user => user.id === id);
     let inputsValues = this.state.inputs;
-    // this.editInputs.forEach(item => {
-    //   inputsValues[item.name] = 
-    // });
-
+    inputsValues[this.editInputs['firstNameInput'].name] = userToEdit.firstName;
+    inputsValues[this.editInputs['lastNameInput'].name] = userToEdit.lastName;
+    inputsValues[this.editInputs['emailInput'].name] = userToEdit.email;
+    inputsValues[this.editInputs['orgInput'].name] = userToEdit.organization;
+    
     this.setState({
-      editUser: userToEdit
+      editUser: userToEdit,
+      inputs: inputsValues,
+      triedToEdit: false
     });
   }
 
@@ -220,8 +223,23 @@ class App extends React.Component {
     });
   }
 
-  handleUserChange(id, e) {
-    axios.put('/users/' + id).then(
+  handleUserChange(e) {
+    let editErrs = this.getErrorsFromInputDict(this.state.inputs, this.state.inputErrors, this.editInputs);
+    this.setState({
+      inputErrors: editErrs
+    });
+
+    //if there's an entry in the dictionary specific to the edit form, 
+    //an invalid change was made so reject the submission.
+    if (Object.keys(this.state.inputErrors).some((val) => val.startsWith('edit'))) {
+      this.setState({
+        triedToEdit: true,
+        submissionSuccessful: false
+      });
+      return;
+    }
+
+    axios.put('/users/' + this.state.editUser.id).then(
       //probably refactor user creation function at least partially to reuse it here.
     );
   }
