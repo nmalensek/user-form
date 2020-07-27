@@ -1,7 +1,15 @@
 import React from 'react';
 import './App.css';
+import BasicUserData from './BasicUserData';
 
 class DetailsWindow extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+        
+        }
+    }    
+
     render() {
         return (
             <div className={'edit-popup'}>
@@ -9,15 +17,13 @@ class DetailsWindow extends React.Component {
                     Currently editing {this.props.user.firstName + ' ' + this.props.user.lastName}
                 </h4>
                 <div>
-                    <label>
-                        First name:
-                        {/* <input type='text' value={this.props.user.firstName}>
-
-                        </input> */}
-                    </label>
-                </div>
-                <div>
-
+                    <BasicUserData
+                        triedToSubmit={this.props.triedToSubmit}
+                        inputs={this.props.inputs}
+                        inputData={this.props.editData}
+                        inputErrors={this.props.inputErrors}
+                        handleTextInputChange={this.props.handleTextInputChange}
+                    />
                 </div>
                 <div>
                     {/* <input type='button' value='Save Changes'></input> */}

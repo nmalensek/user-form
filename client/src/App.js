@@ -6,7 +6,7 @@ import SearchResult from './SearchResult.js';
 import DetailsWindow from './DetailsWindow.js';
 import Validation from './Validation.js';
 import * as Constants from './StringMessages.js';
-import ProcessServerError from "./ProcessServerError";
+import ProcessServerError from './ProcessServerError';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,6 +16,7 @@ class App extends React.Component {
       inputs: {},
       inputErrors: {},
       triedToSubmit: false,
+      triedToEdit: false,
       submissionSuccessful: false,
       submissionServerErrors: [],
       actionCompleteMessage: '',
@@ -45,6 +46,13 @@ class App extends React.Component {
     lastNameInput: {name: 'lastNameInput', func: Validation.requiredValidName},
     emailInput: {name: 'emailInput', func: Validation.requiredValidEmail},
     orgInput: {name: 'orgInput', func: Validation.requiredValidOrg}
+  }
+
+  editInputs = {
+    firstNameInput: {name: 'editFirstNameInput', func: Validation.requiredValidName},
+    lastNameInput: {name: 'editLastNameInput', func: Validation.requiredValidName},
+    emailInput: {name: 'editEmailInput', func: Validation.requiredValidEmail},
+    orgInput: {name: 'editOrgInput', func: Validation.requiredValidOrg}
   }
 
 /*
@@ -85,6 +93,23 @@ class App extends React.Component {
     }
   }
 
+  //Go through the given dictionary and return a dictionary of inputs with errors.
+  //Remove inputs from the dictionary if they have a valid value for easier processing later.
+  getErrorsFromInputDict(inputDict, targetDict, validationDict) {
+    //only show validation errors when a user tries to submit the form.
+    let errors = targetDict;
+
+    Object.keys(inputDict).forEach((val) => {
+      if (validationDict[val].func(inputDict[val])) {
+        delete errors[val];
+      } else {
+        errors[val] = true;
+      }
+    });
+    
+    return errors;
+  }
+
   //if a user has a single quote in their name, it won't render correctly unless the HTML is decoded.
   //decodes each object's properties and modifies the given array in-place. This method does not execute script tags if present.
   decodeObjectProperties(objectArray) {
@@ -123,19 +148,12 @@ class App extends React.Component {
   }
 
   handleNewUserSubmit() {
-    //only show validation errors when a user tries to submit the form.
-    let errors = this.state.inputErrors;
+    let currErrs = this.getErrorsFromInputDict(this.state.inputs, this.state.inputErrors, this.inputData);
+    this.setState({inputErrors: currErrs});
 
-    Object.keys(this.state.inputs).forEach((val) => {
-      if (this.inputData[val].func(this.state.inputs[val])) {
-        delete errors[val];
-      } else {
-        errors[val] = true;
-      }
-    });
-    this.setState({inputErrors: errors});
-
-    if (Object.keys(this.state.inputErrors).length !== 0) {
+    //if there's an entry in the dictionary that isn't specific to the edit form, 
+    //there's invalid new user input so reject the submission.
+    if (Object.keys(this.state.inputErrors).some((val) => !val.startsWith('edit'))) {
       this.setState({
         triedToSubmit: true,
         submissionSuccessful: false
@@ -183,11 +201,14 @@ class App extends React.Component {
     });
   }
 
-  //open the edit/details popup on edit button click and populate fields, don't change anything yet. Using find is ok because ids are unique.
+  //open the edit/details popup on edit button click and populate fields, don't change anything yet because user can still cancel out.
   handleEditClick(id, e) {
-    let userToEdit = this.state.users.find((user) => {
-      return user.id === id;
-    });
+    let userToEdit = this.state.users.find(user => user.id === id);
+    let inputsValues = this.state.inputs;
+    // this.editInputs.forEach(item => {
+    //   inputsValues[item.name] = 
+    // });
+
     this.setState({
       editUser: userToEdit
     });
@@ -236,6 +257,7 @@ class App extends React.Component {
             inputs={this.state.inputs}
             inputErrors={this.state.inputErrors}
             handleTextInputChange={this.handleTextInputChange}
+            triedToSubmit={this.state.triedToSubmit}
           />
         </div>
 
@@ -250,6 +272,11 @@ class App extends React.Component {
         
         {this.state.editUser && <DetailsWindow
           user={this.state.editUser}
+          editData={this.editInputs}
+          inputs={this.state.inputs}
+          inputErrors={this.state.inputErrors}
+          handleTextInputChange={this.handleTextInputChange}
+          triedToSubmit={this.state.triedToEdit}
           editFunc={this.handleUserChange}
           cancelFunc={this.cancelEdit}
         />
