@@ -84,12 +84,12 @@ class App extends React.Component {
     });
   }
 
-  createNewUserFromInputs() {
+  createNewUserFromInputs(inputNames) {
     return {
-      firstName: this.state.inputs[this.inputData.firstNameInput.name],
-      lastName: this.state.inputs[this.inputData.lastNameInput.name],
-      email: this.state.inputs[this.inputData.emailInput.name],
-      organization: this.state.inputs[this.inputData.orgInput.name]
+      firstName: this.state.inputs[inputNames.firstNameInput.name],
+      lastName: this.state.inputs[inputNames.lastNameInput.name],
+      email: this.state.inputs[inputNames.emailInput.name],
+      organization: this.state.inputs[inputNames.orgInput.name]
     }
   }
 
@@ -161,7 +161,7 @@ class App extends React.Component {
       return;
     }
 
-    axios.post('/users', this.createNewUserFromInputs())
+    axios.post('/users', this.createNewUserFromInputs(this.inputData))
       .then(() => {
         this.setState({
           submissionSuccessful: true,
@@ -202,7 +202,7 @@ class App extends React.Component {
   }
 
   //open the edit/details popup on edit button click and populate fields, don't change anything yet because user can still cancel out. Reset edit state on each edit click.
-  handleEditClick(id, e) {
+  handleEditClick(id) {
     let userToEdit = this.state.users.find(user => user.id === id);
     let inputsValues = this.state.inputs;
     inputsValues[this.editInputs['firstNameInput'].name] = userToEdit.firstName;
@@ -217,7 +217,7 @@ class App extends React.Component {
     });
   }
 
-  cancelEdit(e) {
+  cancelEdit() {
     this.setState({
       editUser: null
     });
@@ -239,9 +239,26 @@ class App extends React.Component {
       return;
     }
 
-    axios.put('/users/' + this.state.editUser.id).then(
-      //probably refactor user creation function at least partially to reuse it here.
-    );
+    let updatedUser = this.createNewUserFromInputs(this.editInputs);
+    Object.keys(this.state.editUser).filter(x => x !== ('id')).forEach(prop => {
+      if (updatedUser[prop] === undefined) {
+        throw new Error('Edit form entries is missing property: ' + prop);
+      }
+      if (updatedUser[prop] === this.state.editUser[prop]) {
+        delete updatedUser[prop];
+      }
+    });
+    console.log(updatedUser);
+
+    axios.put('/users/' + this.state.editUser.id, updatedUser)
+    .then(() => {
+      this.setState({
+        triedToEdit: false,
+        editUser: null,
+        submissionSuccessful: true
+      });
+      this.getAllUsers();
+    });
   }
 
   render() {
