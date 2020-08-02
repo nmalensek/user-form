@@ -46,8 +46,25 @@ module.exports = function(userFile, fse, logger) {
         });
     }
     
-    UserOps.editUser = function(id, cb) {
-
+    UserOps.editUser = function(id, updatedValues, cb) {
+        return fse.readJSON(userFile)
+        .then(data => {
+            let editedUser = data[id];
+            Object.keys(updatedValues).forEach(k => {
+                if (editedUser.hasOwnProperty(k)) {
+                    editedUser[k] = updatedValues[k];
+                }
+            });
+            
+            return fse.writeJson(userFile, data)
+            .then(() => {
+                cb(null);
+            });
+        })
+        .catch(err => {
+            logger.error(err);
+            cb(err);
+        });
     }
 
     UserOps.deleteUser = function(id, cb) {

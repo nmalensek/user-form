@@ -9,3 +9,7 @@ export const userDeleted = 'User deleted successfully!';
 export function getPersonalizedUserDeletedMessage(user) {
     return user + ' deleted successfully';
 }
+
+export function getPersonalizedUserEditedMessage(user) {
+    return user + ' edited successfully';
+}

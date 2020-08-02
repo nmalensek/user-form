@@ -241,23 +241,30 @@ class App extends React.Component {
 
     let updatedUser = this.createNewUserFromInputs(this.editInputs);
     Object.keys(this.state.editUser).filter(x => x !== ('id')).forEach(prop => {
-      if (updatedUser[prop] === undefined) {
-        throw new Error('Edit form entries is missing property: ' + prop);
-      }
-      if (updatedUser[prop] === this.state.editUser[prop]) {
+      if (updatedUser[prop] !== undefined && 
+        updatedUser[prop] === this.state.editUser[prop]) {
         delete updatedUser[prop];
       }
     });
-    console.log(updatedUser);
 
     axios.put('/users/' + this.state.editUser.id, updatedUser)
     .then(() => {
+      let fullName = this.state.editUser.firstName + ' ' + this.state.editUser.lastName
       this.setState({
         triedToEdit: false,
         editUser: null,
-        submissionSuccessful: true
+        submissionSuccessful: true,
+        actionCompleteMessage: Constants.getPersonalizedUserEditedMessage(fullName)
       });
       this.getAllUsers();
+    })
+    .catch(err => {
+      let errors = ProcessServerError.getServerErrorAsArray(err, Constants);
+      
+      this.setState({
+        submissionServerErrors: errors,
+        submissionSuccessful: false,
+      });
     });
   }
 
