@@ -123,7 +123,7 @@ class App extends React.Component {
   }
 
   getAllUsers() {
-    axios.get('/users').then(res => {
+    axios.get('/users/').then(res => {
       this.decodeObjectProperties(res.data);
       this.setState({
         users: res.data
@@ -161,7 +161,7 @@ class App extends React.Component {
       return;
     }
 
-    axios.post('/users', this.createNewUserFromInputs(this.inputData))
+    axios.post('/users/', this.createNewUserFromInputs(this.inputData))
       .then(() => {
         this.setState({
           submissionSuccessful: true,
@@ -260,7 +260,7 @@ class App extends React.Component {
     })
     .catch(err => {
       let errors = ProcessServerError.getServerErrorAsArray(err, Constants);
-      
+      console.log(errors);
       this.setState({
         submissionServerErrors: errors,
         submissionSuccessful: false,
