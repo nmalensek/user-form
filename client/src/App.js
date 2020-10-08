@@ -260,7 +260,7 @@ class App extends React.Component {
     })
     .catch(err => {
       let errors = ProcessServerError.getServerErrorAsArray(err, Constants);
-      console.log(errors);
+      
       this.setState({
         submissionServerErrors: errors,
         submissionSuccessful: false,
